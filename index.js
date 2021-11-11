@@ -52,13 +52,14 @@ async function run() {
             const filter = { _id: ObjectId(id) }
             const cursor = await dronesCollection.findOne(filter);
             res.json(cursor);
-        })
+        });
         app.delete('/drones/:_id', async (req, res) => {
             const id = req.params._id;
             const filter = { _id: ObjectId(id) }
             const cursor = await dronesCollection.deleteOne(filter);
             res.json(cursor);
-        })
+        });
+        // purchase and order ------------------
         app.post('/purchase', async (req, res) => {
             const data = req.body;
             const result = await ordersCollection.insertOne(data);
@@ -75,7 +76,7 @@ async function run() {
                 result = await ordersCollection.find({}).toArray();
             }
             res.json(result);
-        })
+        });
         app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
@@ -90,16 +91,17 @@ async function run() {
             const result = await ordersCollection.updateOne(filter, doc, options);
             res.json(result)
         });
+        // reviews --------------
         app.get('/reviews', async (req, res) => {
             const result = await reviewsCollection.find({}).toArray();
             res.json(result);
-        })
+        });
         app.post('/reviews', async (req, res) => {
             const data = req.body;
             const result = await reviewsCollection.insertOne(data);
             res.json(result);
-        })
-
+        });
+        // user ------------------------
         app.post('/user', async (req, res) => {
             const user = req.body;
             const result = await usersCollection.insertOne(user);
@@ -117,7 +119,7 @@ async function run() {
             }
             res.json({ admin: isAdmin });
         });
-
+        // admin --------------------
         app.put('/user/admin', async (req, res) => {
             const data = req.body;
             const filter = { email: data.email };
@@ -126,7 +128,7 @@ async function run() {
             const result = await usersCollection.updateOne(filter, updateDoc, options)
             console.log(result);
             res.json(result);
-        })
+        });
 
     }
     finally {
