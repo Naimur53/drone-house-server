@@ -80,6 +80,7 @@ async function run() {
             else {
                 result = await ordersCollection.find({}).toArray();
             }
+            const outPut = await result.reverse();
             res.json(result);
         });
         app.delete('/orders/:id', async (req, res) => {
