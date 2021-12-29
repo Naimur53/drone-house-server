@@ -75,7 +75,7 @@ async function run() {
             let result;
             if (userEmail) {
                 const query = { email: userEmail }
-                result = await ordersCollection.find(query).toArray().reverse();
+                result = await ordersCollection.find(query).toArray();
             }
             else {
                 result = await ordersCollection.find({}).toArray();
