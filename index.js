@@ -16,11 +16,12 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
+const stripe = require("stripe")(process.env.Stripe_secret);
+
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.icikx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-
 
 async function run() {
     try {
@@ -74,10 +75,10 @@ async function run() {
             let result;
             if (userEmail) {
                 const query = { email: userEmail }
-                result = await ordersCollection.find(query).toArray();
+                result = await ordersCollection.find(query).toArray().reverse();
             }
             else {
-                result = await ordersCollection.find({}).toArray();
+                result = await ordersCollection.find({}).toArray().reverse();
             }
             res.json(result);
         });
@@ -133,6 +134,40 @@ async function run() {
             console.log(result);
             res.json(result);
         });
+        app.post("/create-payment-intent", async (req, res) => {
+            console.log('hisss');
+            const amount = parseFloat(req.body.price) * 100;
+            console.log(typeof (amount), 'home');
+            // Create a PaymentIntent with the order amount and currency
+            if (amount) {
+                const paymentIntent = await stripe.paymentIntents.create({
+                    amount,
+                    currency: "usd",
+                    automatic_payment_methods: {
+                        enabled: true,
+                    },
+                });
+
+                res.json({
+                    clientSecret: paymentIntent.client_secret,
+                });
+            }
+        });
+        app.put('/payment/:email', async (req, res) => {
+            const email = req.params.email;
+            const data = req.body;
+            console.log(data);
+            const updateDoc = {
+                $set: {
+                    isPaid: data
+                }
+            }
+            const filter = {
+                email,
+            }
+            const result = await ordersCollection.updateMany(filter, updateDoc)
+            console.log(result);
+        })
 
     }
     finally {
