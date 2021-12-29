@@ -78,7 +78,7 @@ async function run() {
                 result = await ordersCollection.find(query).toArray().reverse();
             }
             else {
-                result = await ordersCollection.find({}).toArray().reverse();
+                result = await ordersCollection.find({}).toArray();
             }
             res.json(result);
         });
@@ -135,7 +135,6 @@ async function run() {
             res.json(result);
         });
         app.post("/create-payment-intent", async (req, res) => {
-            console.log('hisss');
             const amount = parseFloat(req.body.price) * 100;
             console.log(typeof (amount), 'home');
             // Create a PaymentIntent with the order amount and currency
