@@ -135,6 +135,15 @@ async function run() {
             console.log(result);
             res.json(result);
         });
+        app.put('/user/editor', async (req, res) => {
+            const data = req.body;
+            const filter = { email: data.email };
+            const options = { upsert: true };
+            const updateDoc = { $set: { role: 'editor' } };
+            const result = await usersCollection.updateOne(filter, updateDoc, options)
+            console.log(result);
+            res.json(result);
+        });
         app.post("/create-payment-intent", async (req, res) => {
             const amount = parseFloat(req.body.price) * 100;
             console.log(typeof (amount), 'home');
